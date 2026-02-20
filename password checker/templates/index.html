@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cyber Password Checker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<canvas id="matrix"></canvas>
+
+<div class="container">
+    <h2>Cyber Password Strength Checker</h2>
+
+    <form method="POST">
+        <input type="password" name="password" placeholder="Enter password" required>
+        <button type="submit">Check</button>
+    </form>
+
+    {% if result %}
+        <div class="result">
+            <p>Entropy: {{ result.entropy }}</p>
+            <p>Estimated Crack Time: {{ result.crack_time }}</p>
+            <p>Strength: {{ result.strength }}</p>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+
+const letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const fontSize = 16;
+const columns = canvas.width / fontSize;
+
+const drops = [];
+
+for (let x = 0; x < columns; x++)
+    drops[x] = 1;
+
+function draw() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#00ff00";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+            drops[i] = 0;
+
+        drops[i]++;
+    }
+}
+
+setInterval(draw, 33);
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const input = document.querySelector("input[name='password']");
+
+    input.addEventListener("input", function() {
+        const resultBox = document.querySelector(".result");
+        if (resultBox) {
+            resultBox.style.display = "none";
+        }
+    });
+});
+</script>
+
+</body>
+</html>
+
+</body>
+</html>
